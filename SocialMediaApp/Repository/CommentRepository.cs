@@ -56,5 +56,45 @@ namespace SocialMediaApp.Repository
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<Comment> UpdateAsync(int Id, Comment comment)
+        {
+            try
+            {
+                    var existingComment = await _context.Comments.FindAsync(Id);
+
+                    if (existingComment == null) return null;
+
+
+                    existingComment.Title = comment.Title;
+                    existingComment.Content = comment.Content;
+                
+                    await _context.SaveChangesAsync();
+
+                    return existingComment;
+                                    
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Comment?> DeleteAsync(int Id)
+        {
+            try
+            {
+
+                var comment =  await this.GetByIdAsync(Id);
+                if (comment == null) return null;
+                 this._context.Remove(comment);
+                 await  this._context.SaveChangesAsync();
+                return comment;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

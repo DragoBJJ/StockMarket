@@ -24,7 +24,7 @@ namespace SocialMediaApp.Controllers
             return Ok(stocksDto); 
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public  async Task<IActionResult> GetById([FromRoute] int id) {
 
             var stock =  await this._stockRepo.GetByIdAsync(id);
@@ -47,7 +47,7 @@ namespace SocialMediaApp.Controllers
         }
 
         [HttpPut]
-        [Route("{id}")]
+        [Route("{id:int}")]
 
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockDto stockDto)
         {
@@ -57,7 +57,7 @@ namespace SocialMediaApp.Controllers
           return Ok(stock);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
                var stockId = await _stockRepo.DeleteAsync(id);
