@@ -28,5 +28,15 @@ namespace SocialMediaApp.Mappers
             };
 
         }
+
+        public static Comment ToCommentFromUpdate(this UpdateCommentDto commentModel)
+        {
+            return new Comment
+            {
+                Title = commentModel.Title,
+                Content = commentModel.Content
+            };
+
+        }
     }
 }

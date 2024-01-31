@@ -2,16 +2,13 @@
 using SocialMediaApp.Data;
 using SocialMediaApp.Models;
 using SocialMediaApp.DTO.Stock;
+using SocialMediaApp.Helpers;
 
 namespace SocialMediaApp.Repository
 {
-    public class StockRepository : IStockRepository
+    public class StockRepository(ApplicationDBContext context) : IStockRepository
     {
-        private readonly ApplicationDBContext _context;
-        public StockRepository(ApplicationDBContext context)
-        {
-            this._context = context;
-        }
+        private readonly ApplicationDBContext _context = context;
 
         public async Task<Stock> CreateAsync(Stock stockModel)
         {
@@ -54,16 +51,35 @@ namespace SocialMediaApp.Repository
             }
         }
 
-        public async Task<List<Stock>> GetAllAsync()
+        public async Task<List<Stock>> GetAllAsync(QueryObject query)
         {
             try
+            {
+                var stocks = _context.Stock.Include(c => c.Comments).AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(query.CompanyName))
                 {
-                     var stocks = await _context.Stock.ToListAsync();
-
-                    if (stocks.Count <= 0) return null;
-
-                     return stocks;
+                    stocks = stocks.Where(s => s.CompanyName.Contains(query.CompanyName));
                 }
+
+                if (!string.IsNullOrEmpty(query.Symbol))
+                {
+                    stocks = stocks.Where(s => s.Symbol.Contains(query.Symbol));
+
+                }
+
+                if (!string.IsNullOrEmpty(query.SortBy))
+                {
+                    if(query.SortBy.Equals("Symbol", StringComparison.OrdinalIgnoreCase))
+                    {
+                        stocks = query.IsDescending ? stocks.OrderByDescending(s => s.Symbol) : stocks.OrderBy(s => s.Symbol);
+                    }
+                }
+
+                var skipNumber = (query.PageNumber - 1) * query.PageSize;
+
+                return await stocks.Skip(skipNumber).Take(query.PageSize).ToListAsync();
+            }
             catch (Exception ex)
             {
 

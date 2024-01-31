@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SocialMediaApp.Data;
 using SocialMediaApp.DTO.Stock;
+using SocialMediaApp.Helpers;
 using SocialMediaApp.Mappers;
 using SocialMediaApp.Models;
 
@@ -14,9 +15,9 @@ namespace SocialMediaApp.Controllers
         private readonly IStockRepository _stockRepo = stockRepo;
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
-             var stocks = await this._stockRepo.GetAllAsync();
+             var stocks = await this._stockRepo.GetAllAsync(query);
 
             if (stocks == null) return NotFound();
 

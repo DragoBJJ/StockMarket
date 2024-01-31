@@ -47,7 +47,7 @@ namespace SocialMediaApp.Controllers
         }
 
         [HttpPost("{stockId:int}")]
-        public async Task<IActionResult> Create([FromRoute] int stockId, [FromBody] CreateCommentDto body)
+        public async Task<IActionResult> Create([FromRoute] int stockId, [FromBody] CreateCommentDto bodyDto)
         {
             if (!ModelState.IsValid)
             {
@@ -61,18 +61,18 @@ namespace SocialMediaApp.Controllers
                     return BadRequest("Stock does not Exist");
                 }
 
-                var commentModel = body.ToCommentFromCreate(stockId);
+                var commentModel = bodyDto.ToCommentFromCreate(stockId);
                 await _commentRepo.CreateAsync(commentModel);
-                return CreatedAtAction(nameof(GetById), commentModel.ToCommentDto());
+                return CreatedAtAction(nameof(GetById), new { id = commentModel.Id}, commentModel.ToCommentDto());
 
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update([FromRoute] int id, CreateCommentDto createDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentDto bodyDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
            
-            var comment = await this._commentRepo.UpdateAsync(id, createDto.ToCommentFromCreate(id));
+            var comment = await this._commentRepo.UpdateAsync(id, bodyDto.ToCommentFromUpdate());
 
             if(comment == null) return NotFound();  
             
@@ -97,5 +97,6 @@ namespace SocialMediaApp.Controllers
             return Ok(comment.ToCommentDto());      
         }
 
+    
     }
 }

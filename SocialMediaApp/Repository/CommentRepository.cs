@@ -57,23 +57,23 @@ namespace SocialMediaApp.Repository
             }
         }
 
-        public async Task<Comment> UpdateAsync(int Id, Comment comment)
+        public async Task<Comment?> UpdateAsync(int Id, Comment comment)
         {
             try
-            {
-                    var existingComment = await _context.Comments.FindAsync(Id);
+                {
+                        var existingComment = await _context.Comments.FindAsync(Id);
 
-                    if (existingComment == null) return null;
+                        if (existingComment == null) return null;
 
 
-                    existingComment.Title = comment.Title;
-                    existingComment.Content = comment.Content;
+                        existingComment.Title = comment.Title;
+                        existingComment.Content = comment.Content;
                 
-                    await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync();
 
-                    return existingComment;
+                        return existingComment;
                                     
-            }
+                }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
